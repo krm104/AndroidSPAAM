@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">AndroidSPAAM</string>
+    <string name="hello_world">SPAAM Calibration App (Ensure the PC client is running on the paired computer)</string>
+    <string name="action_settings">Settings</string>
+    <string name="left_eye">Calibrate Left Eye</string>
+    <string name="right_eye">Calibrate Right Eye</string>
+
+
+</resources>
