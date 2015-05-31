@@ -1,3 +1,27 @@
+/////////////////////////////////////////////////////////////////
+The code performing the SVD operation needed to solve for the SPAAM calibration results is taken almost directly from the Ubitrack library. I have simply converted it from C++ and Boost to Java and JAMA:
+
+Ubitrack - Library for Ubiquitous Tracking
+ Copyright 2006, Technische Universitaet Muenchen,
+This is free software; you can redistribute it and/or modify it
+under the terms of the GNU Lesser General Public License as
+published by the Free Software Foundation; either version 2.1 of
+the License, or (at your option) any later version.
+
+This software is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public
+License along with this software; if not, write to the Free
+Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston,MA
+02110-1301 USA, or see the FSF site: http://www.fsf.org.
+
+The source code is open source under the GLPL license. Please feel free
+to use and modfiy the source code with proper citation where applicable
+
+/////////////////////////////////////////////////////////////////
 A Single Point Active Alignment Method implementation created to calibrate the left and right eye perspective projections for the Epson Moverio BT-200 Optical See-Through Head-Mounted Display
 
 The intention of this program is to allow a user to calibrate the left and right eye view of the Epson Moverio, save the calibration result to the device, and be able to use other programs which read those calibration files to produce correctly registered AR content.

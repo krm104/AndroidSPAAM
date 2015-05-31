@@ -336,6 +336,12 @@ public class OGLESRenderer extends Activity implements Renderer {
 		}
 	}
 	
+	/***************************************************************
+	 * @param context
+	 * 
+	 * This is the constructor for the OGLESRenderer class. It initializes
+	 * the arrays required for rendering and also begins the Vuforio tracking engine.
+	 ***************************************************************/
 	public OGLESRenderer( Context context )
 	{
 		this.context = context;
@@ -359,6 +365,14 @@ public class OGLESRenderer extends Activity implements Renderer {
 		initTracking(SCREENWIDTH, SCREENHEIGHT);	
 	}
 	
+	/****************************************************************
+	 * This function is called when the OpenGL ES surface (the object
+	 * to which the graphics are rendered, basically the display buffer)
+	 * is initialized. I believe this is called after the construcor for the class.
+	 * 
+	 * The primary fucntion of this mehtod is to initialize all of the shader
+	 * and OpenGL related handels and data.
+	 ***************************************************************/
 	@Override
 	public void onSurfaceCreated(GL10 gl, EGLConfig config) {
 		/////////////Get Moverio Display Controller///
@@ -380,7 +394,6 @@ public class OGLESRenderer extends Activity implements Renderer {
 		aCrossPositionLocation = glGetAttribLocation(crossProgram, A_POSITION);
 		crossVertexData.position(0);
 		glVertexAttribPointer(aCrossPositionLocation, CROSS_POSITION_COMPONENT_COUNT, GL_FLOAT, false, 0, crossVertexData);
-		//glEnableVertexAttribArray(aCrossPositionLocation);
 		
 		//////////////////////////////////
 		//Setup the Square Shaders//
@@ -396,9 +409,15 @@ public class OGLESRenderer extends Activity implements Renderer {
 		aSquarePositionLocation = glGetAttribLocation(squareProgram, A_POSITION);
 		squareVertexData.position(0);
 		glVertexAttribPointer(aSquarePositionLocation, 3, GL_FLOAT, false, 0, squareVertexData);
-		//glEnableVertexAttribArray(aSquarePositionLocation);	
 	}
 
+	/***************************************************************
+	 * This function is basically the callback for when the surface
+	 * changes (either by a pause/resume call of the activity or
+	 * if the surface is resized or loses and regains context).
+	 * 
+	 * It basically just handles resizing for this application.
+	 **************************************************************/
 	@Override
 	public void onSurfaceChanged(GL10 gl, int width, int height) {
 		glViewport(0, 0, width, height);
@@ -410,12 +429,31 @@ public class OGLESRenderer extends Activity implements Renderer {
 		mDisplayControl.setMode(DisplayControl.DISPLAY_MODE_3D, false);
 	}
 
+	/****************************************************************
+	 * @param cam_x
+	 * @param cam_y
+	 * @param cam_z
+	 * 
+	 * This is a callback used by the Vuforia tracking engine. It passes
+	 * the 3D position of the center of the tracking marker. Vuforia returns
+	 * the distance in cm, hence why the position is diveded by 100.
+	 ****************************************************************/
 	public void setCameraPoseNative(float cam_x,float cam_y,float cam_z) {
 		this.cam_x = cam_x/100.0f;
 		this.cam_y = cam_y/100.0f;
 		this.cam_z = cam_z/100.0f;
 	}
 
+	/********************************************************************
+	 * @param transform0	 * @param transform1	 * @param transform2	 * @param transform3
+	 * @param transform4	 * @param transform5	 * @param transform6	 * @param transform7
+	 * @param transform8	 * @param transform9	 * @param transform10	 * @param transform11
+	 * @param transform12	 * @param transform13	 * @param transform14	 * @param transform15
+	 *
+	 * This functions is a callback method used by the Vuforia tracking engine to pass the
+	 * 3D pose of the marker in the head relative cooridnae frame. This pose is used for positioning
+	 * and orienting the verification square overlaid on the marker during calibration.
+	 ********************************************************************/
 	public void setCameraOrientationNative(float transform0, float transform1, float transform2, float transform3,
 			float transform4, float transform5, float transform6, float transform7, float transform8, float transform9,
 			float transform10, float transform11, float transform12, float transform13, float transform14, float transform15) {
@@ -427,15 +465,28 @@ public class OGLESRenderer extends Activity implements Renderer {
 	
 	}
 
+	/**************************************************************************
+	 * @param istracked
+	 * 
+	 * This is a callback function used by the Vuforia traking engine to indicate when
+	 * the marker is being tracked. This is used to provide feedback to the user when it is
+	 * okay to take a calibration reading (only when the marker is being tracked of course).
+	 *************************************************************************/
 	public void setTrackedNative(boolean istracked) {
 		 tracking = istracked;
 	}
 
+	/**************************************************************************
+	 * This function is basically the render function. It is called every time 
+	 * a frame is rendered. It draws items based upon the eye chosen for calibration
+	 * and also which cross is to be displayed.
+	 *************************************************************************/
 	@Override
 	public void onDrawFrame(GL10 gl) {
 		updateTracking();
 		
 		/////////////////////////////////////////////////////////////////////////
+		//Left Eye//
 		if ( !eye )
 		{
 			//Draw Left Eye//
@@ -469,6 +520,7 @@ public class OGLESRenderer extends Activity implements Renderer {
 			else
 				glUniform4f(uSquareColorLocation, 1.0f, 0.0f, 0.0f, 1.0f);
 			
+			//Send the matrix values to the shader and draw the vertex arrays//
 			glUniformMatrix4fv(uProjectionLocation, 1, false, u_ProjectionLeft, 0);
 			glUniformMatrix4fv(uTransformLocation, 1, false, u_Transform, 0);
 			glDrawArrays(GL_LINES, 0, squareVertices.length/3);	
@@ -476,6 +528,7 @@ public class OGLESRenderer extends Activity implements Renderer {
 		}
 		///////////////////////////////////////////////////////////////////////////
 		///////////////////////////////////////////////////////////////////////////
+		//Right Eye//
 		if ( eye)
 		{
 			//Draw Right Eye//
@@ -509,6 +562,7 @@ public class OGLESRenderer extends Activity implements Renderer {
 			else
 				glUniform4f(uSquareColorLocation, 1.0f, 0.0f, 0.0f, 1.0f);
 
+			//Send the matrix values to the shader and draw the vertex arrays//
 			glUniformMatrix4fv(uProjectionLocation, 1, false, u_ProjectionRight, 0);
 			glUniformMatrix4fv(uTransformLocation, 1, false, u_Transform, 0);
 			glDrawArrays(GL_LINES, 0, squareVertices.length/3);	
@@ -517,20 +571,33 @@ public class OGLESRenderer extends Activity implements Renderer {
 		///////////////////////////////////////////////////////////////////////////
 	}
 
+	/**************************************************************************
+	 * @throws IOException
+	 * 
+	 * This function handles the tap event for the touchpad of the Moverio.
+	 * It checks to make sure that the marker is being tracked and then checks
+	 * the state (which cross) and passes the 2D pixel location of the cross
+	 * and the 3D position data of the marker center to the SVD related math functions
+	 * to solve for the SPAAM solution.
+	 **************************************************************************/
 	public void handleTouchPress() throws IOException{
 		
+		//Verify the marker is being tracker//
 		if ( tracking )
 		{
-			/////Display Cross/////
+			/////This is checking if we are at the last cross (of the 25)/////
 			if ( crossNum >= crossVertices.length/2-4 )
-			{
+			{	//Make sure a single cross is displayed and not the full grid//
 				if ( crossNum >= 0)
 				{	
-					///////Write Pixels//////
+					//record the pixel and 3D point location data//
 					svd.corr_points.add(new Correspondence_Pair(cam_x, cam_y, cam_z,
 							crossVertices[crossNum*2+4]/2*960f + 480f, crossVertices[crossNum*2+1]/2f*540f + 270f));
+					//Call the SVD function, a minimum of 6 points is required//
 					if ( svd.projectionDLTImpl() ) {
+						//Build the OpenGL 4x4 projection matrix with a near clip plane of .1 and far clip plane of 100//
 						svd.BuildGLMatrix3x4(.1, 100.0, 960, 0, 540, 0);
+						//write the calibration results to the proper file//
 						if ( !eye ){
 			                for (int i = 0; i < 16; i++) {
 			                	u_ProjectionLeft[i] = (float)svd.projMat3x4[i];
@@ -545,13 +612,18 @@ public class OGLESRenderer extends Activity implements Renderer {
 				}
 				crossNum = -4;
 				crossCount = crossVertices.length/2;
-			}else {
+			}//This is any cross but the last cross//
+			else {
+				//Makre sure a single cross is displayed and not the full grid//
 				if ( crossNum >= 0)
 				{	
+					//record the pixel and 3D point location data//
 					svd.corr_points.add(new Correspondence_Pair(cam_x, cam_y, cam_z,
 							crossVertices[crossNum*2+4]/2*960f + 480f, crossVertices[crossNum*2+1]/2f*540f + 270f));
+					//Call the SVD function, a minimum of 6 points is required//
 					if ( svd.projectionDLTImpl() ){
 						svd.BuildGLMatrix3x4(.1, 100.0, 960, 0, 540, 0);
+						//write the calibration results to the proper file//
 						if ( !eye ) {
 			                for (int i = 0; i < 16; i++) {
 			                	u_ProjectionLeft[i] = (float)svd.projMat3x4[i];
@@ -570,6 +642,10 @@ public class OGLESRenderer extends Activity implements Renderer {
 		}
 	}
 	
+	/***************************************************************************
+	 * This function is needed for the touch events callback setup. It does not
+	 * currently perform any meaningful function however.
+	 **************************************************************************/
 	public void handleTouchDrag(){
 		
 	}

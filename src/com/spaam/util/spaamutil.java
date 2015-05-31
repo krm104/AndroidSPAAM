@@ -26,18 +26,40 @@ to use and modfiy the source code with proper citation where applicable
 
 package com.spaam.util;
 
+//Jaba imports//
 import java.util.ArrayList;
 import java.util.List;
 
+//Import needed for the Linear Algebra and Matrix related math functions//
 import Jama.*;
 
+/*******************************************************************************
+ * This class provides an interface and related sub classes for recording
+ * 2D - 3D   screen - world correspondence pairs needed for the SPAAM calibration.
+ * 
+ * It also provides a class for storing a list of correspondence pairs and then performing
+ * the SVD calculation on those pairs.
+ *******************************************************************************/
 public class spaamutil {
 
+		/***************************************************************************
+		 * This class is the interface by which a list of correspondence pairs can be
+		 * recorded and the SVD calculations performed on those pairs. The list
+		 * corr_points stores all of the screen-world alignment pairs and the function
+		 * projectionDLTImpl( ) performs the SVD calculations producing the final
+		 * 3x4 projection Matrix.
+		 **************************************************************************/
 		static public class SPAAM_SVD{
 			
+			//Default Constructor that does nothing//
 			public SPAAM_SVD()
 			{			}
 			
+			/********************************************************************
+			 * This class is used to easily store a 2D Pixel and 3D world point
+			 * correspondence pair. This makes it easy to keep related values
+			 * for each pair together.
+			 *******************************************************************/
 			static public class Correspondence_Pair {
 				public Correspondence_Pair( )
 				{  }
@@ -73,6 +95,7 @@ public class spaamutil {
 
 			///////////////////////////////////////////////////////////////////////////////////////////////
 
+			//A helper function to perform an element wise divide of 2 matrices (or vectors)
 			private Matrix element_div(Matrix m1, Matrix m2)
 			{
 				Matrix result = null;
@@ -91,6 +114,8 @@ public class spaamutil {
 			}
 			///////////////////////////////////////////////////////////////////////////////////////////////
 			
+			//This is a normalization function that normalizes all of the 2D and 3D correpsondence values//
+			//Normalization is required since the 2D and 3D point values come over different ranges of values//
 			private void estimateNormalizationParameters( )
 			{
 				////determine the number of points to be normalized////
@@ -132,6 +157,8 @@ public class spaamutil {
 				////end of function////
 			}
 
+			//This function produces the correction values needed to transform the result of the SVD function//
+			//back into the proper range of values//
 			private void generateNormalizationMatrix( )
 			{
 				////compute correction matrix////
@@ -161,6 +188,9 @@ public class spaamutil {
 				}
 			}
 			
+			//This function should be called to perform the Singular Value Decomposition operation//
+			//on the correspondence pairs in the corr_points list. The result is the 3x4 projection matrix//
+			//stored in the Proj3x4 object.//
 			public boolean projectionDLTImpl( )
 			{
 				////minimum of 6 correspondence points required to solve////
@@ -206,9 +236,8 @@ public class spaamutil {
 
 				// solve using SVD
 				//Matrix s = new Matrix(1, 12);
-				Matrix Vt = new Matrix(12, 12);
 				//Matrix U = new Matrix( 2 * corr_points.size(), 2 * corr_points.size() );
-				
+				Matrix Vt = new Matrix(12, 12);
 				Vt = A.svd().getV().transpose();
 				
 				// copy result to 3x4 matrix
@@ -238,6 +267,8 @@ public class spaamutil {
 				return true;
 			}
 		
+			//This function transforms the 3x4 projection matrix produced by the SVD operation into a//
+			//4x4 matrix matrix usable by OpenGL. The parameters are the near, far clip plans, and screen resolution//
 			public void BuildGLMatrix3x4(double ne, double fr, int right, int left, int top, int bottom){
 				projMat3x4[0] = Proj3x4.get(0, 0); projMat3x4[1] = Proj3x4.get(0, 1); projMat3x4[2] = Proj3x4.get(0, 2); projMat3x4[3] = Proj3x4.get(0, 3);
 				projMat3x4[4] = Proj3x4.get(1, 0); projMat3x4[5] = Proj3x4.get(1, 1); projMat3x4[6] = Proj3x4.get(1, 2); projMat3x4[7] = Proj3x4.get(1, 3);
@@ -246,6 +277,8 @@ public class spaamutil {
 				constructProjectionMatrix4x4_( ne, fr, right, left, top, bottom);
 			}
 			
+			//This function creates an orthogonal matrix that is then multiplied by the 3x4 SPAAM result//
+			//creating a 4x4 matrix (row major order) usable by OpenGL//
 			private void constructProjectionMatrix4x4_( double ne, double fr, int right, int left, int top, int bottom)
 			{
 				double[] proj4x4 = new double[16];

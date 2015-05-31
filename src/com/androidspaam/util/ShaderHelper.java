@@ -1,3 +1,8 @@
+/**************************************************************************************
+ * This file contains the ShaderHelper interface which facilitates the reading in
+ * of shader files.
+ *************************************************************************************/
+
 package com.androidspaam.util;
 
 
@@ -19,17 +24,24 @@ import static android.opengl.GLES20.glValidateProgram;
 import static android.opengl.GLES20.GL_VALIDATE_STATUS;
 
 
+/*******************************************************************
+ * Interface for loading shader files, compiling shader code,
+ * and linking shader programs.
+ ******************************************************************/
 public class ShaderHelper {
 	private static final String TAG = "ShaderHelper";
 	
+	//Compiles a vertex shader program and returns a handle to the program// 
 	public static int compileVertexShader(String shaderCode){
 		return compileShader(GL_VERTEX_SHADER, shaderCode);
 	}
 	
+	//Compiles a fragment shader program and returns a handle to the program//
 	public static int compileFragmentShader(String shaderCode){
 		return compileShader(GL_FRAGMENT_SHADER, shaderCode);
 	}
 	
+	//calls the specific function for compiling any shader program//
 	private static int compileShader(int type, String shaderCode){
 		final int shaderObjectId = glCreateShader(type);
 		
@@ -52,6 +64,7 @@ public class ShaderHelper {
 		return shaderObjectId;
 	}
 	
+	//Links a vertex shader to a fragment shader and returns a handle to the complete shader program//
 	public static int linkProgram(int vertexShaderId, int fragmentShaderId){
 		final int programObjectId = glCreateProgram();
 		
@@ -75,6 +88,7 @@ public class ShaderHelper {
 		return programObjectId;
 	}
 
+	//Verify that the passed in handle is to a valid shader program//
 	public static boolean validateProgram(int programObjectId){
 		glValidateProgram(programObjectId);
 		
@@ -92,7 +106,8 @@ public class ShaderHelper {
 	 * @param bottom - bottom most pixel of the viewport
 	 * @param near - value representing the near plane
 	 * @param far - value representing the far plane
-	 * @return - dummy boolean
+	 * Returns an orthographic matrix with the passed in values for near and far clip plane
+	 * and screen resolutions
 	 ***********************************************************/
 	public static float[] createOrthoMatrix( float[] ortho, int left, int right, int top, int bottom, float near, float far){
 		ortho[0] = 2.0f/(right - left); ortho[1] = 0.0f; ortho[2] = 0.0f; ortho[3] = (right + left)/(left - right);
@@ -108,7 +123,7 @@ public class ShaderHelper {
 	 * @param proj4x4 - 16 float array where the result will be stored (assumes row major order)
 	 * @param near - value representing the near plane
 	 * @param far - value representing the far plane
-	 * @return - dummy boolean
+	 * Combines an orthographic matrix with a 3x4 projection amtrix to produce a 4x4 projection matrix used by OpenGL
 	 **********************************************************/
 	public static float[] create4x4Projection( float[] proj3x4, float[] proj4x4, float near, float far ){
 		//Create Needed Extra Values to expand 3x4 to 4x4//
@@ -128,6 +143,7 @@ public class ShaderHelper {
 		return proj4x4;
 	}
 	
+	//Helper function to transpose a matrix (from row major to column major ro vice versa//
 	public static float[] transposeMatrix(float [] m){
         float[] temp = new float[m.length];
         temp[0] = m[0]; temp[1] = m[4]; temp[2] = m[8]; temp[3] = m[12];

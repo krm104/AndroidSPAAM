@@ -1,3 +1,7 @@
+/**************************************************************************
+ * This file contains an interface for reading in a text resource.
+ * This is primarily used for reading in shader files.
+ *************************************************************************/
 package com.androidspaam.util;
 
 import java.io.BufferedReader;
@@ -8,6 +12,9 @@ import java.io.InputStreamReader;
 import android.content.Context;
 import android.content.res.Resources;
 
+/****************************************************************************
+ * Interface for reading in text resources (shader files)
+ ***************************************************************************/
 public class TextResourceReader {
 	public static String readTextFileFromResource(Context context, int resourceID){
 		StringBuilder body = new StringBuilder();
