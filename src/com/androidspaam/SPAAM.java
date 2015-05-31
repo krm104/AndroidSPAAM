@@ -3,12 +3,32 @@
  * Affiliation: Mississippi State University
  * 
  * Description: This is the main starting activity for the SPAAM calibration app
- * for the Epson Moverio BT-200 (though it could be used for other android powerer
- * devices.
+ * for the Epson Moverio BT-200.
  * 
- * The SPAAM activity initializes a Bluetooth server type connection and awaits
- * for a client to connect. It then creates an OGLESRenderer instance and calls
- * the rendering function to begin displaying the cross-hair pattern to the user.
+ * In order to perform the calibration, the tracking marker (included with the software
+ * as both a Microsoft Power Point and pdf files (letter and A4 size) must be printed.
+ * The Calibration marker must be printed so that the black border of the marker is
+ * 20cm x 20cm in size.
+ * 
+ * This project requires 3 external libraries:
+ * 	Vuforia.java - this library facilitates the marker tracking algorithms that are required
+ * in order to produce location data for the 3D world point used by the SPAAM calibration.
+ * 
+ * 	JAMA.java - this is a Java math library which facilitates the Singular Value Decomposition
+ * operation to solve the linear equation system to obtain the SPAAM result. It also facilitates
+ * basic Matrix operation functions.
+ * 
+ *   BT200Ctrl.java - this library provides access to some of the basic Moverio functions, such as 
+ *  setting Stereo Mode, needed by this application.
+ *  
+ * All 3 third party libraries should be included with this project in a .zip folder.
+ * 
+ * The Java Run Time library (rt.java) is also required but should already be available on your
+ * local development machine. If it is not please visit java.com to download a runtime environment. 
+ *  
+ * The SPAAM activity creates an OGLESRenderer instance and waits for the user to select
+ * the eye which they desire to calibrate (left or right). Once the eye is chosen the
+ * activity then calls the rendering function to begin displaying the cross-hair pattern to the user.
  *******************************************************************************/
 
 /******package name******/
@@ -46,20 +66,22 @@ import android.view.WindowManager;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
-import com.spaam.util.*;
 import android.view.Window;
 import android.view.WindowManager; 
+
+/******Project Specific Import calls******/
+import com.spaam.util.*;
 
 /*******************************************************************************
  * Class: SPAAM
  * Extends: Activity
  * 
- * Description: This class initializes a Bluetooth server and awaits for a client
- * to establish a connection. Once a connection has been received, an instance
+ * Description: This class initializes the main activity and awaits user selection
+ * of the eye to calbrate (left or right). Once an eye is chosen, an instance
  * of the openGL renderer class (OGLESRenderer) is created and rendering of the
  * calibration pattern commences.
  * 
- * This class uses severl C++ native functions specific to use of the Vuforia
+ * This class uses several C++ native functions specific to use of the Vuforia
  * marker tracking SDK. The source code for the Vuforia native functions can 
  * be found in the "jni" folder in the VuforiaNative.cpp file.
  ******************************************************************************/
@@ -70,11 +92,11 @@ public class SPAAM extends Activity {
 	//Simple Name to identify the class//
 	private static final String TAG = "SPAAM Activity";
 	
-	// Focus mode constants:
+	// Focus mode constants//
 	private static final int FOCUS_MODE_NORMAL = 0;
 	private static final int FOCUS_MODE_CONTINUOUS_AUTO = 1;
 	
-	// Application status constants:
+	// Application status constants//
 	private static final int APPSTATUS_UNINITED         = -1;
 	private static final int APPSTATUS_INIT_APP         = 0;
 	private static final int APPSTATUS_INIT_QCAR        = 1;
@@ -85,24 +107,24 @@ public class SPAAM extends Activity {
 	private static final int APPSTATUS_CAMERA_STOPPED   = 6;
 	private static final int APPSTATUS_CAMERA_RUNNING   = 7;
 	
-	// Name of the native dynamic libraries to load:
+	// Name of the native dynamic libraries to load//
 	private static final String NATIVE_LIB_SAMPLE = "VuforiaNative";
 	private static final String NATIVE_LIB_QCAR = "Vuforia";
 	
-	// Display size of the device:
+	// Display size of the device//
 	private int mScreenWidth = 0;
 	private int mScreenHeight = 0;
 	
-	// Constant representing invalid screen orientation to trigger a query:
+	// Constant representing invalid screen orientation to trigger a query//
 	private static final int INVALID_SCREEN_ROTATION = -1;
 	
-	// Last detected screen rotation:
+	// Last detected screen rotation//
 	private int mLastScreenRotation = INVALID_SCREEN_ROTATION;
 	
-	// The current application status:
+	// The current application status//
 	private int mAppStatus = APPSTATUS_UNINITED;
 	
-	// The async tasks to initialize the QCAR SDK:
+	// The async tasks to initialize the QCAR SDK//
 	private InitQCARTask mInitQCARTask;
 	private LoadTrackerTask mLoadTrackerTask;
 	
@@ -112,20 +134,21 @@ public class SPAAM extends Activity {
 	// operation to finish before shutting down QCAR:
 	private Object mShutdownLock = new Object();
 	
-	// QCAR initialization flags:
+	// QCAR initialization flags//
 	private int mQCARFlags = 0;
 	
-	// Contextual Menu Options for Camera Flash - Autofocus
+	// Contextual Menu Options for Camera Flash - Autofocus//
 	private boolean mFlash = false;
 	private boolean mContAutofocus = false;
 	
-	// The menu item for swapping data sets:
+	// The menu item for swapping data sets//
 	MenuItem mDataSetMenuItem = null;
 	boolean mIsStonesAndChipsDataSetActive  = false;
 	
 	private RelativeLayout mUILayout;
 	
 	////////////////////////////////////////////////////
+	//////////Vuforia Native Function Declarations//////
 	/** Native tracker initialization and deinitialization. */
 	public native int initTracker();
 	public native void deinitTracker();
@@ -318,10 +341,8 @@ public class SPAAM extends Activity {
 		setActivityPortraitMode(isPortrait);
 	}
 
-	/**
-	* Updates projection matrix and viewport after a screen rotation
-	* change was detected.
-	*/
+	/** Updates projection matrix and viewport after a screen rotation
+	* change was detected. *******************************************/
 	public void updateRenderView()
 	{
 		int currentScreenRotation = getWindowManager().getDefaultDisplay().getRotation();
@@ -525,14 +546,14 @@ public class SPAAM extends Activity {
 	////////////////////////////////////////////////////////////////
 	////////////////////////////////////////////////////////////////
 	////////////////////////////////////////////////////////////////
-	/////////////////Non Vuforia Related Members//////////////////////////////
+	/////////////////Non Vuforia Related Members////////////////////
 
 	///////////////////////////////////////////////////////////////
 	///////////////////////DATA MEMBERS////////////////////////////
 	
+	/** OpenGL ES rendering related objects **/
 	private GLSurfaceView glSurfaceView;
 	private boolean renderSet = false;
-	
 	OGLESRenderer oglRenderer = null;
 	
 	///////////////////////////////////////////////////////////////
@@ -542,15 +563,28 @@ public class SPAAM extends Activity {
 	
 	//////////////////////////////////////////////////////////////
 	///////////////////////Other Methods/////////////////////////
+	/** This function is called if the Left Eye is Selected for Calibration **/
 	public void setLeftEye(View view) throws IOException {
+			//simple flag denoting left eye is the chosen eye//
 			oglRenderer.eye = false;
+			
+			//function to prepare the correct calibration file for reading/writing//
 			oglRenderer.SetupFileFunc(false);
+			
+			//set the OpenGL renderer to be the active content view (makes it visible)//
 			setContentView(glSurfaceView);
 	 }
+	
+	/** This function is called if the Right Eye is Selected for Calibration **/
 	public void setRightEye(View view) throws IOException {
 		{
+			//simple flag denoting right eye is the chosen eye//
 			oglRenderer.eye = true;
+			
+			//function to prepare the correct calibration file for reading/writing//
 			oglRenderer.SetupFileFunc(true);
+			
+			//set theOpenGL renderer to be the active content view (makes it visible)
    	    	 setContentView(glSurfaceView);
 		}
 	 }
@@ -558,6 +592,15 @@ public class SPAAM extends Activity {
 	
 	static boolean firstTimeGetImage=true;
 	
+	/*********************************************************************************
+	 * Method called at the start of the program when the SPAAM activity is created.
+	 * The main purpose of this activity is to configure the necessary attributes
+	 * and parameters so that OpenGL ES 2.0 can be used and also to set some specific
+	 * device settings (such as hiding the lower menu of the Moverio device).
+	 * 
+	 * Callbacks to handle tap events on the OpenGL rendering window are also set in this
+	 * method as well, and the Vuforio libraries loaded and marker tracking enabled.
+	 *********************************************************************************/
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -595,6 +638,7 @@ public class SPAAM extends Activity {
 			glSurfaceView.setEGLContextClientVersion(2);
 			glSurfaceView.setRenderer(oglRenderer);
 			renderSet = true;
+			//Set tap event listener handler//
 			glSurfaceView.setOnTouchListener(new OnTouchListener(){
 				@Override
 				public boolean onTouch(View v, MotionEvent event){
@@ -631,6 +675,11 @@ public class SPAAM extends Activity {
 		//////////////////////////	
     }
 
+    /***********************************************************************
+     * This function is currently not used since an options menu is not
+     * currently provided for this application. It is left in since perhaps
+     * an options menu will be added at a later date.
+     **********************************************************************/
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -638,6 +687,11 @@ public class SPAAM extends Activity {
         return true;
     }
 
+    /***********************************************************************
+     * This function is currently not used since an options menu is not 
+     * currently included with this application. It is left in since perhaps
+     * an options menu will be added at a later date.
+     **********************************************************************/
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -650,6 +704,13 @@ public class SPAAM extends Activity {
         return super.onOptionsItemSelected(item);
     }
 
+    /***********************************************************************
+     * This function is called whenever the main activity is resumed from the
+     * paused state (including when the application is initialy started.
+     * 
+     * The primary function is to ensure that the Vuforia (QCAR) marker tracking
+     * engine is running and that the OpenGL renderer is also drawing.
+     **********************************************************************/
     public void onResume(){
     	super.onResume();
 
@@ -677,6 +738,14 @@ public class SPAAM extends Activity {
     	////////////////////////////////////
     }
     
+    /***********************************************************************
+     * This function is called whenever the main activity is paused (by loosing
+     * focus to another activity or when the user closes the activity).
+     * 
+     * The primary function is to ensure that the Vuforia (QCAR) engine is
+     * paused so that the camera resources are freed and that the OpenGL ES
+     * renderer is no longer drawing.
+     **********************************************************************/
     public void onPause(){
     	super.onPause();
     	
@@ -708,6 +777,13 @@ public class SPAAM extends Activity {
 		/////////////////////////////////
     }
 
+    /**********************************************************************
+     * This function is called when the main activity is closed.
+     * 
+     * The primary function of this method is to free all of the system
+     * resources acquired by the application, particularly the Vuforia
+     * related resources.
+     *********************************************************************/
     @Override
     protected void onDestroy()
     {
@@ -749,10 +825,16 @@ public class SPAAM extends Activity {
         
     }
 
+    /**********************************************************************
+     * This function is called when the device configuration (layout) changes.
+     * 
+     * This only happens on the Moverio at the start of the activity and
+     * shouldn't really ever be called again since the screen layout
+     * doesn't normally change on the Moverio (it's usually always landscape)
+     *********************************************************************/
 	@Override
     public void onConfigurationChanged(Configuration config)
     {
-       // DebugLog.LOGD("VuforiaJMEActivity::onConfigurationChanged");
         super.onConfigurationChanged(config);
 
         updateActivityOrientation();

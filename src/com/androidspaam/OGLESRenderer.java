@@ -5,8 +5,11 @@
  * 
  * Description: This file contains the Class OGLESRenderer which manages the display 
  * of the on-screen calibration patterns as well as the transmition of the pixel 
- * and 3D point locations (obtained from Vuforia) to the Ubitrack program running on
- * a separate machine.
+ * and 3D point locations (obtained from Vuforia) to the JAMA SVD operation.
+ * 
+ * This file contains all of the functions used by the OpenGL renderer and also the
+ * tap event callback functions as well as the functions related to reading/writing 
+ * the calibration files for each eye.
  *************************************************************************************/
 
 /******Package Name******/
@@ -63,12 +66,14 @@ import com.spaam.util.spaamutil.SPAAM_SVD.Correspondence_Pair;
  * Implements: Renderer
  * Description: This class controls the display of the calibration
  * pattern as well as the transmission of the pixel and 3D point locations
- * used to generate the 3x4 SPAAM projection matrix.
+ * used to generate the 3x4 SPAAM projection matrix resulting from the 
+ * SVD operation (and conversion of this matrix into the 4x4 used by OpenGL).
+ * The tap event callback functions are also defined within this activity
+ * as well.
  *********************************************************************/
 public class OGLESRenderer extends Activity implements Renderer {
-	final int SCREENWIDTH = 960;
-	final int SCREENHEIGHT = 540;
-	
+	final int SCREENWIDTH = 960; //full screen width for each eye of the Moverio device//
+	final int SCREENHEIGHT = 540; //full screen height for each eye of the Moverio device//
 	
 	/******Members for openGL ES rendering******/
 	//Members Specific to the Calibration Grid//
@@ -76,6 +81,13 @@ public class OGLESRenderer extends Activity implements Renderer {
 	private static final int BYTES_PER_FLOAT = 4;
 	private static final String U_COLOR = "u_Color";
 	private static final String A_POSITION = "a_Position";
+	
+	/*******************************************************************************************
+	 * These are the static locations for the onscreen crosses used for the SPAAM alignments.
+	 * Ideally these points would be created at run time, but for now they are hard coded to these
+	 * location. There is a 5x5  (25 total) arrangement of crosshairs such that they are equally
+	 * distributed vertically and horizontally aross the display screen.
+	 *******************************************************************************************/
 	float[] crossVertices = {		//Row One//
 									-394f/960f,196.8f/540f,-374f/960f,196.8f/540f,-384f/960f,186.8f/540f,-384f/960f,206.8f/540f,
 									-202f/960f,196.8f/540f,-182f/960f,196.8f/540f,-192f/960f,186.8f/540f,-192f/960f,206.8f/540f,
@@ -117,6 +129,8 @@ public class OGLESRenderer extends Activity implements Renderer {
 	private static final int SQUARE_POSITION_COMPONENT_COUNT = 3;
 	private static final String U_PROJECTION = "u_Projection";
 	private static final String U_TRANSFORM = "u_Transform";
+	//These are the vertices describing the location of the corners of the verification square//
+	//This should eventually be updated to a verification cube//
 	float[] squareVertices= {//Top Edge//
 									-0.10f, 0.10f, 0.0f, 0.10f, 0.10f, 0.0f,
 									//Left Edge//
@@ -126,6 +140,12 @@ public class OGLESRenderer extends Activity implements Renderer {
 									//Bottom Edge//
 									-0.10f, -0.10f, 0.0f, 0.10f, -0.10f, 0.0f
 									};
+	
+	
+	//Members which define the started values for the projection matrices used to render the left
+	//and right eye viewpoint as well as the transformation needed to properly locate the verification
+	//square (the location obtained via the Vuforia marker tracker. These values simply create identity
+	//matrices in order to initial the members for later use//
 	float[] u_ProjectionLeft = {1f, 0f, 0f, 0f,
 							0f, 1, 0f, 0f,
 							0f, 0f, 1f, 0f,
@@ -138,6 +158,8 @@ public class OGLESRenderer extends Activity implements Renderer {
 							0.0f, 1.0f, 0.0f, 0.0f,
 							0.0f, 0.0f, 1.0f, 0.0f,
 							0.0f, 0.0f, 0.0f, 1.0f};
+	
+	//Members used to store handles to the various attributes needed by the shaders//
 	private final FloatBuffer squareVertexData;
 	private int squareProgram;
 	private int uSquareColorLocation;
@@ -157,6 +179,7 @@ public class OGLESRenderer extends Activity implements Renderer {
 
 	private final Context context;
 	
+	//Members to store the x, y, z, location of the 3D world alignment point (center of the tracking marker)//
 	float cam_x = 0f;
 	float cam_y = 0f;
 	float cam_z = 0f;
@@ -198,8 +221,8 @@ public class OGLESRenderer extends Activity implements Renderer {
 	    return file;
 	}
 
-	///////////////////////////////////////////////////////
-	///////////////////////////////////////////////////////
+	/////////////////////////////////////////////////////
+	//////////////Vuforio Native Functions///////////////
 	/** Native function for initializing the renderer. */
     public native void initTracking(int width, int height);
 
@@ -207,8 +230,17 @@ public class OGLESRenderer extends Activity implements Renderer {
     public native void updateTracking();
     //////////////////////
 	
+    /****************************************************************
+     * @param eye - the eye chosen for calibration
+     * @throws IOException - exception thrown when file cannot be accessed
+     * 
+     * This function checks if the calibration file for the selected
+     * eye is already created and can be read from. If it is not
+     * already created, then the file is created.
+     ***************************************************************/
 	public void SetupFileFunc( boolean eye) throws IOException
 	{
+		//Is the storage of the device readable//
 		if (isExternalStorageReadable() && isExternalStorageWritable()) {
 			File storageDirectory = getAlbumStorageDir("SPAAM_Calib");
 			if ( storageDirectory != null ){
@@ -217,25 +249,32 @@ public class OGLESRenderer extends Activity implements Renderer {
 					file = true;
 					calibFile = null;
 				
+					//Check if the file for the chosen eye exists. If the file does not exist, create it//
+					//Right eye//
 					if ( eye ) {
+						//Check if file exists//
 						for ( int i = 0; i < storageDirectory.listFiles().length; i++ ){
 							if ( storageDirectory.listFiles()[i].getName() == "Right.calib" ){
 								calibFile = storageDirectory.listFiles()[i];
 								break;
 							}
 						}
+						//file does not exist//
 						if ( calibFile == null )
 						{
 							calibFile = new File(storageDirectory.getAbsolutePath() + "/Right.calib");
 							calibFile.createNewFile();
 						}
-					}else {
+					}//Left eye//
+					else {
+						//Check if file exists//
 						for ( int i = 0; i < storageDirectory.listFiles().length; i++ ){
 							if ( storageDirectory.listFiles()[i].getName() == "Left.calib" ){
 								calibFile = storageDirectory.listFiles()[i];
 								break;
 							}
 						}
+						//file does not exist//
 						if ( calibFile == null )
 						{
 							calibFile = new File(storageDirectory.getAbsolutePath() + "/Left.calib");
@@ -243,9 +282,11 @@ public class OGLESRenderer extends Activity implements Renderer {
 						}
 					}
 					
+					//Attempt to read from the file. If the file is empty (just created, nothing is read)//
 					RandomAccessFile rac_file = new RandomAccessFile(calibFile.getAbsolutePath(), "r");
 					if ( rac_file.length() >= 16*8 )
 					{
+						//Store the calibration result into the correct projection for the selected eye//
 						if ( eye ){
 							for ( int i = 0; i < 16; i++ )
 							{
@@ -261,21 +302,32 @@ public class OGLESRenderer extends Activity implements Renderer {
 					rac_file.close();
 				}
 			}
-		}else{
+		}//File Storage could not be accessed
+		else{
 			file = false;
 		}
 	}
 
+	/***************************************************************
+	 * @throws IOException - exception thrown when the file cannot be accessed
+	 * 
+	 * This function attempts to write the calibration results to the correct
+	 * file for the selected eye. The results are written as doubles in
+	 * row major order (4x4 OpenGL matrix).
+	 **************************************************************/
 	public void WriteFileFunc( ) throws IOException{
+		//Open the file for read/write access//
 		RandomAccessFile rac_file = new RandomAccessFile(calibFile.getAbsolutePath(), "rw");
 		rac_file.setLength(0);
+		//Write the Right eye results//
 		if ( eye ){
 			for ( int i = 0; i < 16; i++ )
 			{
 				rac_file.writeDouble((double)u_ProjectionRight[i]);
 			}
 			rac_file.close();
-		}else{
+		}//Write the Left eye results//
+		else{
 			for ( int i = 0; i < 16; i++ )
 			{
 				rac_file.writeDouble((double)u_ProjectionLeft[i]);
@@ -359,11 +411,8 @@ public class OGLESRenderer extends Activity implements Renderer {
 	}
 
 	public void setCameraPoseNative(float cam_x,float cam_y,float cam_z) {
-		// u_Transform[12] =
 		this.cam_x = cam_x/100.0f;
-		// u_Transform[13] =
 		this.cam_y = cam_y/100.0f;
-		// u_Transform[14] =
 		this.cam_z = cam_z/100.0f;
 	}
 
