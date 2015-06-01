@@ -124,6 +124,7 @@ int color abc_search_url_text_holo 0x7f080003
 int color abc_search_url_text_normal 0x7f080000
 int color abc_search_url_text_pressed 0x7f080002
 int color abc_search_url_text_selected 0x7f080001
+int dimen MenuButtonSize 0x7f090017
 int dimen abc_action_bar_default_height 0x7f090002
 int dimen abc_action_bar_icon_vertical_padding 0x7f090003
 int dimen abc_action_bar_progress_bar_size 0x7f09000a
@@ -251,7 +252,7 @@ int id activity_chooser_view_content 0x7f060025
 int id always 0x7f06000b
 int id beginning 0x7f060011
 int id button1 0x7f06003e
-int id button2 0x7f06003d
+int id button2 0x7f06003f
 int id checkbox 0x7f06002d
 int id collapseActionView 0x7f06000d
 int id default_activity_button 0x7f060028
@@ -267,7 +268,7 @@ int id homeAsUp 0x7f060005
 int id icon 0x7f06002a
 int id ifRoom 0x7f06000a
 int id image 0x7f060027
-int id imageView3 0x7f06003f
+int id imageView3 0x7f060040
 int id listMode 0x7f060001
 int id list_item 0x7f060029
 int id middle 0x7f060012
@@ -295,7 +296,7 @@ int id split_action_bar 0x7f06001e
 int id submit_area 0x7f060039
 int id tabMode 0x7f060002
 int id textView1 0x7f06003c
-int id textView2 0x7f060040
+int id textView2 0x7f06003d
 int id title 0x7f06002b
 int id top_action_bar 0x7f060020
 int id up 0x7f060021

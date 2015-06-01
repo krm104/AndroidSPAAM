@@ -13,46 +13,55 @@
         android:id="@+id/textView1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
-        android:text="@string/hello_world" />
-
-    <Button
-        android:id="@+id/button2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/textView1"
-        android:layout_below="@+id/textView1"
-        android:layout_marginTop="24dp"
-        android:onClick="setRightEye"
-        android:text="@string/right_eye" />
+        android:layout_marginLeft="90dp"
+        android:layout_marginTop="42dp"
+        android:text="@string/hello_world"
+        android:textSize="@dimen/MenuButtonSize" />
 
     <TextView
         android:id="@+id/textView2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/button1"
-        android:layout_centerVertical="true"
-        android:text="@string/print_marker" />
+        android:layout_below="@+id/textView1"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="50dp"
+        android:text="@string/print_marker"
+        android:textSize="@dimen/MenuButtonSize" />
 
     <Button
         android:id="@+id/button1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/button2"
-        android:layout_alignBottom="@+id/button2"
-        android:layout_marginLeft="64dp"
-        android:layout_toRightOf="@+id/button2"
+        android:layout_alignRight="@+id/textView1"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="77dp"
         android:onClick="setLeftEye"
-        android:text="@string/left_eye" />
+        android:text="@string/left_eye"
+        android:textSize="@dimen/MenuButtonSize" />
+
+    <Button
+        android:id="@+id/button2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/button1"
+        android:layout_below="@+id/button1"
+        android:layout_marginTop="84dp"
+        android:onClick="setRightEye"
+        android:text="@string/right_eye"
+        android:textSize="@dimen/MenuButtonSize" />
 
     <ImageView
         android:id="@+id/imageView3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/textView2"
         android:layout_below="@+id/textView2"
-        android:layout_toLeftOf="@+id/button1"
-        android:minHeight="128dp"
-        android:minWidth="128dp"
+        android:maxHeight="100dp"
+        android:maxWidth="100dp"
+        android:minHeight="360dp"
+        android:minWidth="360dp"
         android:scaleType="fitCenter"
         android:src="@drawable/tracking_marker" />
 
