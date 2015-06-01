@@ -251,8 +251,8 @@ int id action_mode_close_button 0x7f060024
 int id activity_chooser_view_content 0x7f060025
 int id always 0x7f06000b
 int id beginning 0x7f060011
-int id button1 0x7f06003e
-int id button2 0x7f06003f
+int id button1 0x7f06003f
+int id button2 0x7f06003e
 int id checkbox 0x7f06002d
 int id collapseActionView 0x7f06000d
 int id default_activity_button 0x7f060028
@@ -295,8 +295,8 @@ int id showTitle 0x7f060006
 int id split_action_bar 0x7f06001e
 int id submit_area 0x7f060039
 int id tabMode 0x7f060002
-int id textView1 0x7f06003c
-int id textView2 0x7f06003d
+int id textView1 0x7f06003d
+int id textView2 0x7f06003c
 int id title 0x7f06002b
 int id top_action_bar 0x7f060020
 int id up 0x7f060021
