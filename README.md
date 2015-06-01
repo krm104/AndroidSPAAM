@@ -79,18 +79,25 @@ Even though the marker image is in red, Vuforia is also capable of tracking the 
 
 3: On the main start screen select the eye to calibrate (left or right).
 
+![Main Screen](images/main_screen.png?raw=true)
 
 4: Once the eye is chosen, the alignment crosses will appear in that eye. The other eye will see only a black screen (nothing on the display itself). It is best to close the unused eye during calibration to avoid binocular rivalry.
-
+![Cross Grid](images/tracking_crosses.png?raw=true)
 
 5: Look at the printed tracking marker. If the Moverio's camera is able to see the marker the crosses will appear green. If the crosses appear red then the marker is not seen. Please make sure that the Moverio camera can see the marker at all times. (Blue crosses mean that the marker is tracked but that the internal storage of the device cannot be accessed to record the result).
+
+![Tracking](images/tracking_crosses.png?raw=true)![Not Tracking](images/untracking_crosses.png?raw=true)
 
 6: Tap on the touch pad to begin the calibration. During calibration only a single cross should be visible. (take care not to accidentaly tap on the touchpad during calibration since taps signal for a measurement to be taken).
 
 
 7: Align the green crosshair with the center of the white cross on the tracking marker. Once the screen cross and tracking marker cross are aligned, tap on the touch pad to take the measurement and show the next cross.
 
+![Aligned Cross](images/aligned_cross.png?raw=true)
+
 9: Repeat the process for as many crosses as desired to achieve a satisfactory calibration. A green wireframe square will be shown during the calibration. A very good calibration should result in the wireframe square matching the border of the tracking marker very closely.
+
+![Verification Square](images/verification_square.png?raw=true)
 
 10: The calibration results should be saved in the 'Download' folder of the device in the new folder 'SPAAM_Calib'. A seperate file for the left and right eye will be created and can be used by other programs to create perspectively correct projections. The calibration results are created using a RandomAccess file object writting doubles. So be sure to read doubles in your own programs using these files. The saved results are 4x4 matrices in row major order that can be used directly in opengl ES program (just remember that OpenGL uses column major ordering).
     
