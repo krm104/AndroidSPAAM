@@ -44,16 +44,20 @@ There are 3 main parts to this software
 ## PROJECT SETUP:
 If you wish to modify the code of this project, follow these simple steps to setup the project for compilation in the Eclipse IDE for Android development.
     
-1: Import the project directly by selecting the import option from the File menu of Eclipese.
+1: Import the project directly by selecting the import option from the File menu of Eclipse.
+
 ![Import Project](images/import_project.PNG?raw=true)
 
 2: Once the project is imported, you will most likely need to adjust the path settings to the required third party libraries. Right click on the project folder in Eclipse and go to properties. Under the 'Java Build Path' -> Libraries settings, make sure that the correct paths are set for the JAMA.java math library, the Vuforia.java tracking library, the BT200Ctrl.java Moverio settings library, and the rt.jaba java runtime library.
+
 ![Library Paths](images/build_path.PNG?raw=true)
 
 3: Once the paths to the third party libraries are set, also verify that the proper ordering and export options are selected for each.
+
 ![Order & Export](images/order_export.PNG?raw=true)
 
 4: Once the required libraries are properly linked, make sure that the appcompat_V7 library is available from the 'Android' -> 'Library' pane of the properties window. This I believe can be installed through the Eclipse IDE update SDK options (or something to that effect).
+
 ![appcompat_V7 Library](images/Android_Library.PNG?raw=true)
 
 5: You will also need to make sure that the Android NDK is available on your machine since this is needed to compile the JNI c++ code used by the Vuforia library. (You only need to recompile the JNI code if you modify the activity class name, such as copying the code to your own project, or changing the name of the native functions. See the Vuforia developer site for more information on working with Vurforia). If you simply use this project as the starting point of your own application then you will most likely not need to recompile the JNI c++ code.
@@ -64,21 +68,30 @@ If you wish to modify the code of this project, follow these simple steps to set
 To use the calibration software, simply install the apk available in the bin directory of the project and follow these simple steps.
 
 1: Print out the required tracking marker (the black border of the marker should be 20cm x 20cm). There is a Microsoft Power Point and also 2 pdf versions (letter & A4 size) that contain printable versions of the marker.
+
 ![Tracking Marker](images/tracking_marker.png?raw=true)
 
 Even though the marker image is in red, Vuforia is also capable of tracking the marker in grey scale. Therefore, if you can only print the marker in black and white, that is also fine as long as the dimensions are 20cm x 20cm.
 
 2: Run the program on the Moverio device. The icon for the program will resemble the printed tracking marker.
+
 ![Application Icon](images/ic_launcher.png?raw=true)
 
-3:
-and on the main screen select the eye to calibrate (left or right).
-    3: Once the eye is chosen, the alignment crosses will appear in that eye. The other eye will see only a black screen. It is best to close the unused eye during calibration to avoid binocular rivalry.
-    4: Look at the tracking marker. If the Moverio's camera is able to see the marker the crosses will appear green. If the crosses appear red then the marker is not seen. Please make sure that the Moverio camera can see the marker at all times. (Blue crosses mean that the marker is tracked but that the internal storage of the device cannot be accessed to record the result).
-    5: Tap on the touch pad to begin the calibration. During calibration only a single cross should be visible. (take care not to accidentaly tap on the touchpad during calibration since taps signal for a measurement to be taken).
-    6: Align the green crosshair with the center of the white cross on the tracking marker.
-    7: Once the screen cross and tracking marker cross are aligned, tap on the touch pad to take the measurement and show the next cross.
-    8: Repeat the process for as many crosses as desired to achieve a satisfactory calibration. A green wireframe square will be shown during the calibration. A very good calibration should result in the wireframe square matching the border of the tracking marker very closely.
-    9: The calibration results should be saved in the 'Download' folder of the device in the new folder 'SPAAM_Calib'. A seperate file for the left and right eye will be created and can be used by other programs to create perspectively correct projections. The calibration results are created using a RandomAccess file object writting doubles. So be sure to read out doubles in your own programs using these files. The saved results are 4x4 matrices in row major order that can be used directly in opengl ES program (just remember that OpenGL uses column major ordering).
+3: On the main start screen select the eye to calibrate (left or right).
+
+
+4: Once the eye is chosen, the alignment crosses will appear in that eye. The other eye will see only a black screen (nothing on the display itself). It is best to close the unused eye during calibration to avoid binocular rivalry.
+
+
+5: Look at the printed tracking marker. If the Moverio's camera is able to see the marker the crosses will appear green. If the crosses appear red then the marker is not seen. Please make sure that the Moverio camera can see the marker at all times. (Blue crosses mean that the marker is tracked but that the internal storage of the device cannot be accessed to record the result).
+
+6: Tap on the touch pad to begin the calibration. During calibration only a single cross should be visible. (take care not to accidentaly tap on the touchpad during calibration since taps signal for a measurement to be taken).
+
+
+7: Align the green crosshair with the center of the white cross on the tracking marker. Once the screen cross and tracking marker cross are aligned, tap on the touch pad to take the measurement and show the next cross.
+
+9: Repeat the process for as many crosses as desired to achieve a satisfactory calibration. A green wireframe square will be shown during the calibration. A very good calibration should result in the wireframe square matching the border of the tracking marker very closely.
+
+10: The calibration results should be saved in the 'Download' folder of the device in the new folder 'SPAAM_Calib'. A seperate file for the left and right eye will be created and can be used by other programs to create perspectively correct projections. The calibration results are created using a RandomAccess file object writting doubles. So be sure to read doubles in your own programs using these files. The saved results are 4x4 matrices in row major order that can be used directly in opengl ES program (just remember that OpenGL uses column major ordering).
     
 
