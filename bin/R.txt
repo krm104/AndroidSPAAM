@@ -235,6 +235,7 @@ int drawable abc_textfield_searchview_holo_light 0x7f020054
 int drawable abc_textfield_searchview_right_holo_dark 0x7f020055
 int drawable abc_textfield_searchview_right_holo_light 0x7f020056
 int drawable ic_launcher 0x7f020057
+int drawable tracking_marker 0x7f020058
 int id action_bar 0x7f06001c
 int id action_bar_activity_content 0x7f060015
 int id action_bar_container 0x7f06001b
@@ -249,8 +250,8 @@ int id action_mode_close_button 0x7f060024
 int id activity_chooser_view_content 0x7f060025
 int id always 0x7f06000b
 int id beginning 0x7f060011
-int id button1 0x7f06003d
-int id button2 0x7f06003e
+int id button1 0x7f06003e
+int id button2 0x7f06003d
 int id checkbox 0x7f06002d
 int id collapseActionView 0x7f06000d
 int id default_activity_button 0x7f060028
@@ -266,6 +267,7 @@ int id homeAsUp 0x7f060005
 int id icon 0x7f06002a
 int id ifRoom 0x7f06000a
 int id image 0x7f060027
+int id imageView3 0x7f06003f
 int id listMode 0x7f060001
 int id list_item 0x7f060029
 int id middle 0x7f060012
@@ -293,6 +295,7 @@ int id split_action_bar 0x7f06001e
 int id submit_area 0x7f060039
 int id tabMode 0x7f060002
 int id textView1 0x7f06003c
+int id textView2 0x7f060040
 int id title 0x7f06002b
 int id top_action_bar 0x7f060020
 int id up 0x7f060021
@@ -346,6 +349,7 @@ int string action_settings 0x7f0b000f
 int string app_name 0x7f0b000d
 int string hello_world 0x7f0b000e
 int string left_eye 0x7f0b0010
+int string print_marker 0x7f0b0012
 int string right_eye 0x7f0b0011
 int style AppBaseTheme 0x7f0c008b
 int style AppTheme 0x7f0c008c

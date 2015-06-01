@@ -2,10 +2,11 @@
 <resources>
 
     <string name="app_name">AndroidSPAAM</string>
-    <string name="hello_world">SPAAM Calibration App (Ensure the PC client is running on the paired computer)</string>
+    <string name="hello_world">Epson Moverio BT200 SPAAM Calibration App</string>
     <string name="action_settings">Settings</string>
     <string name="left_eye">Calibrate Left Eye</string>
     <string name="right_eye">Calibrate Right Eye</string>
+    <string name="print_marker">Print Tracking Marker and Select Eye to Calibrate</string>
 
 
 </resources>
