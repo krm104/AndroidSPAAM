@@ -44,14 +44,14 @@ There are 3 main parts to this software
 ## PROJECT SETUP:
 If you wish to modify the code of this project, follow these simple steps to setup the project for compilation in the Eclipse IDE for Android development.
     
-1: Import the project directly by selecting the import option from the File menu of Eclipese.
+1: Import the project directly by selecting the import option from the File menu of Eclipse.
 ![Import Project](images/import_project.PNG?raw=true)
 
 2: Once the project is imported, you will most likely need to adjust the path settings to the required third party libraries. Right click on the project folder in Eclipse and go to properties. Under the 'Java Build Path' -> Libraries settings, make sure that the correct paths are set for the JAMA.java math library, the Vuforia.java tracking library, the BT200Ctrl.java Moverio settings library, and the rt.jaba java runtime library.
 ![Library Paths](images/build_path.PNG?raw=true)
 
 3: Once the paths to the third party libraries are set, also verify that the proper ordering and export options are selected for each.
-![Order & Export](images/order_export.PNG?raw=true)
+
 
 4: Once the required libraries are properly linked, make sure that the appcompat_V7 library is available from the 'Android' -> 'Library' pane of the properties window. This I believe can be installed through the Eclipse IDE update SDK options (or something to that effect).
 ![appcompat_V7 Library](images/Android_Library.PNG?raw=true)
