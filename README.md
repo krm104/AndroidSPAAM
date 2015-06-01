@@ -68,8 +68,11 @@ To use the calibration software, simply install the apk available in the bin dir
 
 Even though the marker image is in red, Vuforia is also capable of tracking the marker in grey scale. Therefore, if you can only print the marker in black and white, that is also fine as long as the dimensions are 20cm x 20cm.
 
+2: Run the program on the Moverio device. The icon for the program will resemble the printed tracking marker.
+![Application Icon](images/ic_launcher.png?raw=true)
 
-    2: Run the program and on the main screen select the eye to calibrate (left or right).
+3:
+and on the main screen select the eye to calibrate (left or right).
     3: Once the eye is chosen, the alignment crosses will appear in that eye. The other eye will see only a black screen. It is best to close the unused eye during calibration to avoid binocular rivalry.
     4: Look at the tracking marker. If the Moverio's camera is able to see the marker the crosses will appear green. If the crosses appear red then the marker is not seen. Please make sure that the Moverio camera can see the marker at all times. (Blue crosses mean that the marker is tracked but that the internal storage of the device cannot be accessed to record the result).
     5: Tap on the touch pad to begin the calibration. During calibration only a single cross should be visible. (take care not to accidentaly tap on the touchpad during calibration since taps signal for a measurement to be taken).
