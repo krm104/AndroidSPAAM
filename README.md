@@ -41,7 +41,8 @@ There are 3 main parts to this software
     
 3: Tracking Marker - This is the marker used for the screen-world alighnments of SPAAM. There is a Microsoft Power Point file that contains the marker as well as 2 pdf's (one letter and one A4) which can be used to print the marker to the appropriate size (20cm x 20cm).
 
-PROJECT SETUP: If you wish to modify the code of this project, follow these simple steps to setup the project for compilation in the Eclipse IDE for Android development.
+## PROJECT SETUP:
+If you wish to modify the code of this project, follow these simple steps to setup the project for compilation in the Eclipse IDE for Android development.
     
 1: Import the project directly by selecting the import option from the File menu of Eclipese.
 ![Import Project](images/import_project.PNG?raw=true)
@@ -59,10 +60,12 @@ PROJECT SETUP: If you wish to modify the code of this project, follow these simp
 
 6: The project should now properly compile the apk.
 
-INSTRUCTIONS: To use the calibration software, simply install the apk available in the bin directory of the project and follow these simple steps.
+## INSTRUCTIONS:
+To use the calibration software, simply install the apk available in the bin directory of the project and follow these simple steps.
 
 1: Print out the required tracking marker (the black border of the marker should be 20cm x 20cm). There is a Microsoft Power Point and also 2 pdf versions (letter & A4 size) that contain printable versions of the marker.
 ![Tracking Marker](images/tracking_marker.png?raw=true)
+
 Even though the marker image is in red, Vuforia is also capable of tracking the marker in grey scale. Therefore, if you can only print the marker in black and white, that is also fine as long as the dimensions are 20cm x 20cm.
 
 
