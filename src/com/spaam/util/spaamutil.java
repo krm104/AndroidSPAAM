@@ -268,7 +268,7 @@ public class spaamutil {
 			}
 		
 			//This function transforms the 3x4 projection matrix produced by the SVD operation into a//
-			//4x4 matrix matrix usable by OpenGL. The parameters are the near, far clip plans, and screen resolution//
+			//4x4 matrix matrix usable by OpenGL. The parameters are the near, far clip planes, and screen resolution//
 			public void BuildGLMatrix3x4(double ne, double fr, int right, int left, int top, int bottom){
 				projMat3x4[0] = Proj3x4.get(0, 0); projMat3x4[1] = Proj3x4.get(0, 1); projMat3x4[2] = Proj3x4.get(0, 2); projMat3x4[3] = Proj3x4.get(0, 3);
 				projMat3x4[4] = Proj3x4.get(1, 0); projMat3x4[5] = Proj3x4.get(1, 1); projMat3x4[6] = Proj3x4.get(1, 2); projMat3x4[7] = Proj3x4.get(1, 3);
@@ -278,7 +278,7 @@ public class spaamutil {
 			}
 			
 			//This function creates an orthogonal matrix that is then multiplied by the 3x4 SPAAM result//
-			//creating a 4x4 matrix (row major order) usable by OpenGL//
+			//creating a 4x4 matrix (column major order) usable by OpenGL//
 			private void constructProjectionMatrix4x4_( double ne, double fr, int right, int left, int top, int bottom)
 			{
 				double[] proj4x4 = new double[16];

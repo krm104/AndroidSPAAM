@@ -86,7 +86,7 @@ public class OGLESRenderer extends Activity implements Renderer {
 	 * These are the static locations for the onscreen crosses used for the SPAAM alignments.
 	 * Ideally these points would be created at run time, but for now they are hard coded to these
 	 * location. There is a 5x5  (25 total) arrangement of crosshairs such that they are equally
-	 * distributed vertically and horizontally aross the display screen.
+	 * distributed vertically and horizontally across the display screen.
 	 *******************************************************************************************/
 	float[] crossVertices = {		//Row One//
 									-394f/960f,196.8f/540f,-374f/960f,196.8f/540f,-384f/960f,186.8f/540f,-384f/960f,206.8f/540f,
@@ -140,7 +140,6 @@ public class OGLESRenderer extends Activity implements Renderer {
 									//Bottom Edge//
 									-0.10f, -0.10f, 0.0f, 0.10f, -0.10f, 0.0f
 									};
-	
 	
 	//Members which define the started values for the projection matrices used to render the left
 	//and right eye viewpoint as well as the transformation needed to properly locate the verification
@@ -313,7 +312,7 @@ public class OGLESRenderer extends Activity implements Renderer {
 	 * 
 	 * This function attempts to write the calibration results to the correct
 	 * file for the selected eye. The results are written as doubles in
-	 * row major order (4x4 OpenGL matrix).
+	 * column major order (4x4 OpenGL matrix).
 	 **************************************************************/
 	public void WriteFileFunc( ) throws IOException{
 		//Open the file for read/write access//
@@ -340,7 +339,7 @@ public class OGLESRenderer extends Activity implements Renderer {
 	 * @param context
 	 * 
 	 * This is the constructor for the OGLESRenderer class. It initializes
-	 * the arrays required for rendering and also begins the Vuforio tracking engine.
+	 * the arrays required for rendering and also begins the Vuforia tracking engine.
 	 ***************************************************************/
 	public OGLESRenderer( Context context )
 	{
@@ -368,10 +367,10 @@ public class OGLESRenderer extends Activity implements Renderer {
 	/****************************************************************
 	 * This function is called when the OpenGL ES surface (the object
 	 * to which the graphics are rendered, basically the display buffer)
-	 * is initialized. I believe this is called after the construcor for the class.
+	 * is initialized. I believe this is called after the constructor for the class.
 	 * 
-	 * The primary fucntion of this mehtod is to initialize all of the shader
-	 * and OpenGL related handels and data.
+	 * The primary function of this method is to initialize all of the shader
+	 * and OpenGL related handles and data.
 	 ***************************************************************/
 	@Override
 	public void onSurfaceCreated(GL10 gl, EGLConfig config) {
