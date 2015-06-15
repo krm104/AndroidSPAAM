@@ -99,6 +99,6 @@ Even though the marker image is in red, Vuforia is also capable of tracking the 
 
 ![Verification Square](images/verification_square.png?raw=true)
 
-10: The calibration results should be saved in the 'Download' folder of the device in the new folder 'SPAAM_Calib'. A seperate file for the left and right eye will be created and can be used by other programs to create perspectively correct projections. The calibration results are created using a RandomAccess file object writting doubles. So be sure to read doubles in your own programs using these files. The saved results are 4x4 matrices in row major order that can be used directly in opengl ES program (just remember that OpenGL uses column major ordering).
+10: The calibration results should be saved in the 'Download' folder of the device in the new folder 'SPAAM_Calib'. A seperate file for the left and right eye will be created and can be used by other programs to create perspectively correct projections. The calibration results are created using a RandomAccess file object writting doubles. So be sure to read doubles in your own programs using these files. The saved results are 4x4 matrices in column major order that can be used directly in opengl ES programs.
     
 
