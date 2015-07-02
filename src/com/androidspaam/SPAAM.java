@@ -585,7 +585,7 @@ public class SPAAM extends Activity {
 			oglRenderer.SetupFileFunc(true);
 			
 			//set theOpenGL renderer to be the active content view (makes it visible)
-   	    	 setContentView(glSurfaceView);
+   	    	setContentView(glSurfaceView);
 		}
 	 }
 	///////////////////////////////////////////////////////////////
@@ -670,7 +670,7 @@ public class SPAAM extends Activity {
 				}
 			});
 		} else {
-			Toast.makeText(this, "ÖpenGL ES2.0 Not Supported" , Toast.LENGTH_LONG).show();
+			Toast.makeText(this, "OpenGL ES2.0 Not Supported" , Toast.LENGTH_LONG).show();
 		}
 		//////////////////////////	
     }
