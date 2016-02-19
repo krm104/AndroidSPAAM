@@ -60,10 +60,11 @@ import android.view.WindowManager;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
-import com.qualcomm.QCAR.QCAR;
 /******Qualcomm AR library for Vuforia Useage******/
-/******Android specific Libraries******/
-/******Project Specific Import calls******/
+import com.qualcomm.QCAR.QCAR;
+
+/******Epson Library******/
+import jp.epson.moverio.bt200.DisplayControl;
 
 /*******************************************************************************
  * Class: SPAAM
@@ -561,6 +562,7 @@ public class SPAAM extends Activity {
 	public void setLeftEye(View view) throws IOException {
 			//simple flag denoting left eye is the chosen eye//
 			oglRenderer.eye = false;
+			oglRenderer.stereo = false;
 			
 			//function to prepare the correct calibration file for reading/writing//
 			oglRenderer.ResetState();
@@ -576,6 +578,7 @@ public class SPAAM extends Activity {
 		{
 			//simple flag denoting right eye is the chosen eye//
 			oglRenderer.eye = true;
+			oglRenderer.stereo = false;
 			
 			//function to prepare the correct calibration file for reading/writing//
 			oglRenderer.ResetState();
@@ -592,10 +595,12 @@ public class SPAAM extends Activity {
 		{
 			//simple flag denoting right eye is the chosen eye//
 			oglRenderer.eye = true;
+			oglRenderer.stereo = true;
 			
 			//function to prepare the correct calibration file for reading/writing//
 			oglRenderer.ResetState();
 			oglRenderer.SetupFileFunc(true);
+			oglRenderer.SetupFileFunc(false);
 			
 			//set theOpenGL renderer to be the active content view (makes it visible)
 			contentViewID = 1;
@@ -609,20 +614,19 @@ public class SPAAM extends Activity {
 	@Override       
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 
-	        if (keyCode == KeyEvent.KEYCODE_BACK) 
+	        if (keyCode == KeyEvent.KEYCODE_BACK && contentViewID == 1) 
 	        {
-	        	if (contentViewID == 1)
-	        	{
-	        		contentViewID = 0;
-	        		setContentView(R.layout.activity_spaam);
-	        		return true;
-	        	}
-	        	else
-	        	{
-	        		return super.onKeyDown(keyCode, event);
-	        	}
+	        	contentViewID = 0;
+	        	setContentView(R.layout.activity_spaam);
+	        	return true;
 	        }
-
+	        else if (keyCode == KeyEvent.KEYCODE_MENU && contentViewID == 1)
+	        {
+	        	oglRenderer.SkipCross();
+	        	oglRenderer.mDisplayControl.setMode(DisplayControl.DISPLAY_MODE_3D, false);
+	        	return true;
+	        }
+	        
 	        return super.onKeyDown(keyCode, event);
 	    }
 	
@@ -713,19 +717,19 @@ public class SPAAM extends Activity {
      * This function is currently not used since an options menu is not
      * currently provided for this application. It is left in since perhaps
      * an options menu will be added at a later date.
-     **********************************************************************/
+     **********************************************************************/     
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         //getMenuInflater().inflate(R.menu.spaam, menu);
-        return true;
+        return false;
     }
 
     /***********************************************************************
      * This function is currently not used since an options menu is not 
      * currently included with this application. It is left in since perhaps
      * an options menu will be added at a later date.
-     **********************************************************************/
+     **********************************************************************/   
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -737,7 +741,8 @@ public class SPAAM extends Activity {
         //}
         return super.onOptionsItemSelected(item);
     }
-
+ 
+    
     /***********************************************************************
      * This function is called whenever the main activity is resumed from the
      * paused state (including when the application is initialy started.

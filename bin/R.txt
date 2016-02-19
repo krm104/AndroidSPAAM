@@ -253,6 +253,7 @@ int id always 0x7f06000b
 int id beginning 0x7f060011
 int id button1 0x7f06003f
 int id button2 0x7f06003e
+int id button3 0x7f060041
 int id checkbox 0x7f06002d
 int id collapseActionView 0x7f06000d
 int id default_activity_button 0x7f060028

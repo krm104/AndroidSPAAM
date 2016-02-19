@@ -171,6 +171,7 @@ public class OGLESRenderer extends Activity implements Renderer {
 	int HEIGHT = 0;
 	boolean tracking = false;
 	boolean eye = false;
+	boolean stereo = false;
 	boolean file = false;
 	
 	/////////////Get Moverio Display Controller///
@@ -492,16 +493,41 @@ public class OGLESRenderer extends Activity implements Renderer {
 	@Override
 	public void onDrawFrame(GL10 gl) {
 		updateTracking();
+		//Reset the Display Buffers//
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		
+		if ( stereo )
+		{
+			DrawLeft();
+			glClear(GL_DEPTH_BUFFER_BIT);
+			DrawRight();
+			return;
+		}
 		/////////////////////////////////////////////////////////////////////////
 		//Left Eye//
 		if ( !eye )
 		{
-			//Draw Left Eye//
-			glViewport(0, 0, WIDTH/2, HEIGHT);
-			//Reset the Display Buffers//
-			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-			
+			DrawLeft();
+			return;
+		}
+		///////////////////////////////////////////////////////////////////////////
+		///////////////////////////////////////////////////////////////////////////
+		//Right Eye//
+		if ( eye)
+		{
+			DrawRight();
+			return;
+		}
+		///////////////////////////////////////////////////////////////////////////
+	}
+
+	private void DrawLeft()
+	{
+		//Draw Left Eye//
+		glViewport(0, 0, WIDTH/2, HEIGHT);
+		
+		if ( !stereo )
+		{
 			//Draw the Crosses//
 			glUseProgram(crossProgram);
 			crossVertexData.position(0);
@@ -515,35 +541,34 @@ public class OGLESRenderer extends Activity implements Renderer {
 				glUniform4f(uCrossColorLocation, 1.0f, 0.0f, 0.0f, 1.0f);
 			glDrawArrays(GL_LINES, java.lang.Math.max(crossNum, 0), crossCount);
 			glDisableVertexAttribArray(aCrossPositionLocation);
-			
-			//Draw Square//
-			glUseProgram(squareProgram);
-			squareVertexData.position(0);
-			glVertexAttribPointer(aSquarePositionLocation, SQUARE_POSITION_COMPONENT_COUNT, GL_FLOAT, false, 0, squareVertexData);
-			glEnableVertexAttribArray(aSquarePositionLocation);
-			if ( tracking && file )
-				glUniform4f(uSquareColorLocation, 0.0f, 1.0f, 0.0f, 1.0f);
-			else if ( tracking )
-				glUniform4f(uSquareColorLocation, 0.0f, 0.0f, 1.0f, 1.0f);
-			else
-				glUniform4f(uSquareColorLocation, 1.0f, 0.0f, 0.0f, 1.0f);
-			
-			//Send the matrix values to the shader and draw the vertex arrays//
-			glUniformMatrix4fv(uProjectionLocation, 1, false, u_ProjectionLeft, 0);
-			glUniformMatrix4fv(uTransformLocation, 1, false, u_Transform, 0);
-			glDrawArrays(GL_LINES, 0, squareVertices.length/3);	
-			glDisableVertexAttribArray(aSquarePositionLocation);
 		}
-		///////////////////////////////////////////////////////////////////////////
-		///////////////////////////////////////////////////////////////////////////
-		//Right Eye//
-		if ( eye)
+		
+		//Draw Square//
+		glUseProgram(squareProgram);
+		squareVertexData.position(0);
+		glVertexAttribPointer(aSquarePositionLocation, SQUARE_POSITION_COMPONENT_COUNT, GL_FLOAT, false, 0, squareVertexData);
+		glEnableVertexAttribArray(aSquarePositionLocation);
+		if ( tracking && file )
+			glUniform4f(uSquareColorLocation, 0.0f, 1.0f, 0.0f, 1.0f);
+		else if ( tracking )
+			glUniform4f(uSquareColorLocation, 0.0f, 0.0f, 1.0f, 1.0f);
+		else
+			glUniform4f(uSquareColorLocation, 1.0f, 0.0f, 0.0f, 1.0f);
+		
+		//Send the matrix values to the shader and draw the vertex arrays//
+		glUniformMatrix4fv(uProjectionLocation, 1, false, u_ProjectionLeft, 0);
+		glUniformMatrix4fv(uTransformLocation, 1, false, u_Transform, 0);
+		glDrawArrays(GL_LINES, 0, squareVertices.length/3);	
+		glDisableVertexAttribArray(aSquarePositionLocation);
+	}
+	
+	private void DrawRight()
+	{
+		//Draw Right Eye//
+		glViewport(WIDTH/2, 0, WIDTH/2, HEIGHT);
+
+		if ( !stereo )
 		{
-			//Draw Right Eye//
-			glViewport(WIDTH/2, 0, WIDTH/2, HEIGHT);
-			//Reset the Display Buffers//
-			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-			
 			//Draw the Crosses//
 			glUseProgram(crossProgram);
 			crossVertexData.position(0);
@@ -557,28 +582,41 @@ public class OGLESRenderer extends Activity implements Renderer {
 				glUniform4f(uCrossColorLocation, 1.0f, 0.0f, 0.0f, 1.0f);
 				glDrawArrays(GL_LINES, java.lang.Math.max(crossNum, 0), crossCount);
 				glDisableVertexAttribArray(aCrossPositionLocation);
-			
-			//Draw Square//
-			glUseProgram(squareProgram);
-			squareVertexData.position(0);
-			glVertexAttribPointer(aSquarePositionLocation, SQUARE_POSITION_COMPONENT_COUNT, GL_FLOAT, false, 0, squareVertexData);
-			glEnableVertexAttribArray(aSquarePositionLocation);
-			if ( tracking && file )
-				glUniform4f(uSquareColorLocation, 0.0f, 1.0f, 0.0f, 1.0f);
-			else if ( tracking )
-				glUniform4f(uSquareColorLocation, 0.0f, 1.0f, 0.0f, 1.0f);
-			else
-				glUniform4f(uSquareColorLocation, 1.0f, 0.0f, 0.0f, 1.0f);
-
-			//Send the matrix values to the shader and draw the vertex arrays//
-			glUniformMatrix4fv(uProjectionLocation, 1, false, u_ProjectionRight, 0);
-			glUniformMatrix4fv(uTransformLocation, 1, false, u_Transform, 0);
-			glDrawArrays(GL_LINES, 0, squareVertices.length/3);	
-			glDisableVertexAttribArray(aSquarePositionLocation);
 		}
-		///////////////////////////////////////////////////////////////////////////
-	}
+		
+		//Draw Square//
+		glUseProgram(squareProgram);
+		squareVertexData.position(0);
+		glVertexAttribPointer(aSquarePositionLocation, SQUARE_POSITION_COMPONENT_COUNT, GL_FLOAT, false, 0, squareVertexData);
+		glEnableVertexAttribArray(aSquarePositionLocation);
+		if ( tracking && file )
+			glUniform4f(uSquareColorLocation, 0.0f, 1.0f, 0.0f, 1.0f);
+		else if ( tracking )
+			glUniform4f(uSquareColorLocation, 0.0f, 1.0f, 0.0f, 1.0f);
+		else
+			glUniform4f(uSquareColorLocation, 1.0f, 0.0f, 0.0f, 1.0f);
 
+		//Send the matrix values to the shader and draw the vertex arrays//
+		glUniformMatrix4fv(uProjectionLocation, 1, false, u_ProjectionRight, 0);
+		glUniformMatrix4fv(uTransformLocation, 1, false, u_Transform, 0);
+		glDrawArrays(GL_LINES, 0, squareVertices.length/3);	
+		glDisableVertexAttribArray(aSquarePositionLocation);
+	}
+	
+	public void SkipCross()
+	{
+		/////This is checking if we are at the last cross (of the 25)/////
+		if ( crossNum >= crossVertices.length/2-4 )
+		{	
+			crossNum = -4;
+			crossCount = crossVertices.length/2;
+		}//This is any cross but the last cross//
+		else {
+			crossNum += 4;
+			crossCount = 4;
+		}
+	}
+	
 	/**************************************************************************
 	 * @throws IOException
 	 * 
@@ -591,7 +629,7 @@ public class OGLESRenderer extends Activity implements Renderer {
 	public void handleTouchPress() throws IOException{
 		
 		//Verify the marker is being tracker//
-		if ( tracking )
+		if ( tracking && !stereo)
 		{
 			/////This is checking if we are at the last cross (of the 25)/////
 			if ( crossNum >= crossVertices.length/2-4 )
