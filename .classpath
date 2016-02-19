@@ -6,7 +6,7 @@
 	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.LIBRARIES"/>
 	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.DEPENDENCIES"/>
 	<classpathentry exported="true" kind="lib" path="C:/AR4Android/ThirdParty/vuforia-sdk-android-3-0-9/build/java/vuforia/Vuforia.jar"/>
-	<classpathentry kind="lib" path="C:/Program Files/Java/jre1.8.0_25/lib/rt.jar"/>
+	<classpathentry kind="lib" path="C:/Program Files/Java/jre1.8.0_74/lib/rt.jar"/>
 	<classpathentry exported="true" kind="lib" path="C:/AR4Android/ThirdParty/BT200_SDK1405B/libBT200Ctrl/libBT200Ctrl/BT200Ctrl.jar"/>
 	<classpathentry exported="true" kind="lib" path="C:/AR4Android/ThirdParty/Jama/Jama-1.0.3.jar"/>
 	<classpathentry kind="output" path="bin/classes"/>

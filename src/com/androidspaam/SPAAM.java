@@ -37,17 +37,10 @@ package com.androidspaam;
 /******Java Specific Libraries******/
 import java.io.IOException;
 import java.lang.reflect.Field;
-import java.util.Set;
-import java.util.UUID;
 
-/******Qualcomm AR library for Vuforia Useage******/
-import com.qualcomm.QCAR.QCAR;
-
-/******Android specific Libraries******/
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.Context;
-import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.ConfigurationInfo;
 import android.content.res.Configuration;
@@ -56,6 +49,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -66,11 +60,10 @@ import android.view.WindowManager;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
-import android.view.Window;
-import android.view.WindowManager; 
-
+import com.qualcomm.QCAR.QCAR;
+/******Qualcomm AR library for Vuforia Useage******/
+/******Android specific Libraries******/
 /******Project Specific Import calls******/
-import com.spaam.util.*;
 
 /*******************************************************************************
  * Class: SPAAM
@@ -556,6 +549,7 @@ public class SPAAM extends Activity {
 	private boolean renderSet = false;
 	OGLESRenderer oglRenderer = null;
 	
+	private int contentViewID = 0; 
 	///////////////////////////////////////////////////////////////
 	
 	///////////////////////////////////////////////////////////////
@@ -569,9 +563,11 @@ public class SPAAM extends Activity {
 			oglRenderer.eye = false;
 			
 			//function to prepare the correct calibration file for reading/writing//
+			oglRenderer.ResetState();
 			oglRenderer.SetupFileFunc(false);
 			
 			//set the OpenGL renderer to be the active content view (makes it visible)//
+			contentViewID = 1;
 			setContentView(glSurfaceView);
 	 }
 	
@@ -582,15 +578,53 @@ public class SPAAM extends Activity {
 			oglRenderer.eye = true;
 			
 			//function to prepare the correct calibration file for reading/writing//
+			oglRenderer.ResetState();
 			oglRenderer.SetupFileFunc(true);
 			
 			//set theOpenGL renderer to be the active content view (makes it visible)
+			contentViewID = 1;
+   	    	setContentView(glSurfaceView);
+		}
+	 }
+	
+	/** This function is called if the Right Eye is Selected for Calibration **/
+	public void setDoubleEye(View view) throws IOException {
+		{
+			//simple flag denoting right eye is the chosen eye//
+			oglRenderer.eye = true;
+			
+			//function to prepare the correct calibration file for reading/writing//
+			oglRenderer.ResetState();
+			oglRenderer.SetupFileFunc(true);
+			
+			//set theOpenGL renderer to be the active content view (makes it visible)
+			contentViewID = 1;
    	    	setContentView(glSurfaceView);
 		}
 	 }
 	///////////////////////////////////////////////////////////////
 	
 	static boolean firstTimeGetImage=true;
+	
+	@Override       
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+
+	        if (keyCode == KeyEvent.KEYCODE_BACK) 
+	        {
+	        	if (contentViewID == 1)
+	        	{
+	        		contentViewID = 0;
+	        		setContentView(R.layout.activity_spaam);
+	        		return true;
+	        	}
+	        	else
+	        	{
+	        		return super.onKeyDown(keyCode, event);
+	        	}
+	        }
+
+	        return super.onKeyDown(keyCode, event);
+	    }
 	
 	/*********************************************************************************
 	 * Method called at the start of the program when the SPAAM activity is created.

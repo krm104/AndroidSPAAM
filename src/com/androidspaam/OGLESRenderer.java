@@ -229,6 +229,15 @@ public class OGLESRenderer extends Activity implements Renderer {
     public native void updateTracking();
     //////////////////////
 	
+    
+    public void ResetState()
+    {
+    	crossNum = -4;
+    	crossCount = crossVertices.length/2;
+    	
+    	svd.corr_points.clear();
+    }
+    
     /****************************************************************
      * @param eye - the eye chosen for calibration
      * @throws IOException - exception thrown when file cannot be accessed
